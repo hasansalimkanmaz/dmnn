@@ -15,41 +15,40 @@ torch.manual_seed(seed)
 random.seed(seed)
 np.random.seed(seed)
 
-# INTRODUCTION
-
-inputs = torch.tensor([[2, 1, -2, -1], [2, -2, 2, 1]], dtype=torch.float)
-target = [0, 1, 0, 1]
-
-perceptron = nn.Linear(4, 1)
-
-# change weights
-perceptron.bias = nn.Parameter(torch.zeros_like(perceptron.bias))
-perceptron.weight = nn.Parameter(torch.zeros_like(perceptron.weight))
-
 # EXERCISE 1.1.2
 x = np.arange(0, 21, 1)
 y = - np.sin(0.8 * np.pi * x)
 plt.scatter(x, y)
 plt.plot(x, y)
 
-perceptron = nn.Linear(1, 1)
-criterion = nn.L1Loss()  # any loss for a regression task
-optimizer = torch.optim.SGD(perceptron.parameters(), lr=0.001)
+
+# EXERCISE 1.1.3
+model = nn.Sequential(
+    nn.Linear(1, 2),
+    nn.Tanh(),
+    nn.Linear(2, 1),
+)
+criterion = nn.MSELoss()
+optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 n_epochs = 100
 
-x = torch.tensor([[i] for i in x], dtype=torch.float)
-y = torch.tensor(y, dtype=torch.long)
+x = torch.tensor(np.expand_dims(x, axis=1), dtype=torch.float)
+y = torch.tensor(y, dtype=torch.float)
+model.train()
 for epoch in range(n_epochs):
-    perceptron.train()
     optimizer.zero_grad()
-    output = perceptron(x)
-    loss = criterion(output, y)
+    output = model(x)
+    loss = criterion(output.ravel(), y)
+    print(loss)
     loss.backward()
     optimizer.step()
 
 # as can be seen from the plot, a linear model can't capture the relationship between x and y.
 plt.plot(x, output.detach().numpy())
-plt.legend(["data points", "fitted perceptron"])
+plt.legend(["data points", "fitted model"])
+plt.show()
+
+
 # ######################################################################################################################
 
 # EXERCISE 3.1
@@ -90,8 +89,6 @@ model = nn.Sequential(
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.01)
 
-# train_inputs = torch.tensor(train_set[:, [0, 1]], dtype=torch.float)
-# train_set = train_set[0:100, :]
 train_inputs = torch.tensor(train_set[:, [0, 1]], dtype=torch.float)
 train_targets = torch.tensor(train_set[:, 2], dtype=torch.float)
 validation_inputs = torch.tensor(validation_set[:, [0, 1]], dtype=torch.float)
