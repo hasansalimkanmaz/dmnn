@@ -1,2 +1,4 @@
 *.mlx
 **.idea/
+*.bin
+*.m

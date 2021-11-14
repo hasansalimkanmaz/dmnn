@@ -1,23 +1,22 @@
+import random
+
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
-import torch
-from torch import nn
 import scipy.io
-import random
-import matplotlib as mpl
+import torch
 from sklearn.metrics import mean_squared_error
+from torch import nn
 
-mpl.use('macosx')
+from utils import set_seed
 
-# Seeding for the reproducibility of results.
-seed = 0
-torch.manual_seed(seed)
-random.seed(seed)
-np.random.seed(seed)
+mpl.use("macosx")
+
+set_seed()
 
 # EXERCISE 1.1.2
 x = np.arange(0, 21, 1)
-y = - np.sin(0.8 * np.pi * x)
+y = -np.sin(0.8 * np.pi * x)
 plt.scatter(x, y)
 plt.plot(x, y)
 
@@ -134,15 +133,14 @@ plt.plot(train_losses)
 plt.plot(validation_losses)
 plt.plot(test_losses)
 plt.legend(["Train Loss", "Validation Loss", "Test Loss"])
-plt.yscale('log')
+plt.yscale("log")
 plt.show()
 
 fig = plt.figure()
-ax = plt.axes(projection='3d')
+ax = plt.axes(projection="3d")
 ax.scatter(test_set[:, 0], test_set[:, 1], test_preds.detach().numpy(), c="blue")
 ax.scatter(test_set[:, 0], test_set[:, 1], test_set[:, 2], c="red")
 plt.show()
 
 mse_test = mean_squared_error(test_set[:, 2], test_preds.detach().numpy(), squared=False)
 print(f"RMSE on test set: {mse_test}")
-
